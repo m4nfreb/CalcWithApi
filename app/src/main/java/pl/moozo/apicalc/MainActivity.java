@@ -29,12 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
         apiService = ApiUtils.getAPIService();
 
-        sendBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                postSum(6, 7);
-            }
-        });
+        sendBtn.setOnClickListener(view -> postSum(6, 7));
     }
 
     public void postSum(long a, long b){
