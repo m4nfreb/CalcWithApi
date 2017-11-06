@@ -3,7 +3,7 @@ package pl.moozo.apicalc.data.remote;
 public class ApiUtils {
 
     private ApiUtils() {}
-    public static final String BASE_URL = "http://192.168.0.101:8080/";
+    public static final String BASE_URL = "http://192.168.0.102:8080/";
 
     public static APIService getAPIService() {
 

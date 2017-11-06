@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void postSum(long a, long b){
-        apiService.sum(a, b).enqueue(new Callback<PostSum>() {
+        apiService.sum(new PostSum(a, b)).enqueue(new Callback<PostSum>() {
             @Override
             public void onResponse(Call<PostSum> call, Response<PostSum> response) {
                 if(response.isSuccessful()) {
@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("TAG", "post submitted to API." + response.body().toString());
                 }
             }
-
             @Override
             public void onFailure(Call<PostSum> call, Throwable t) {
                 Log.e("TAG", "Unable to submit post to API.");
