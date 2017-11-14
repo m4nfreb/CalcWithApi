@@ -8,4 +8,5 @@ public class PostSum {
         num1 = n1;
         num2 = n2;
     }
+
 }

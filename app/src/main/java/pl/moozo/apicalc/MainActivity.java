@@ -7,12 +7,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import pl.moozo.apicalc.data.model.PostSum;
 import pl.moozo.apicalc.data.remote.APIService;
 import pl.moozo.apicalc.data.remote.ApiUtils;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,24 +29,36 @@ public class MainActivity extends AppCompatActivity {
         responseTv = (TextView) findViewById(R.id.result);
 
         apiService = ApiUtils.getAPIService();
-
         sendBtn.setOnClickListener(view -> postSum(6, 7));
     }
 
-    public void postSum(long a, long b){
-        apiService.sum(new PostSum(a, b)).enqueue(new Callback<PostSum>() {
-            @Override
-            public void onResponse(Call<PostSum> call, Response<PostSum> response) {
-                if(response.isSuccessful()) {
-                    showResponse(response.body().toString());
-                    Log.i("TAG", "post submitted to API." + response.body().toString());
-                }
-            }
-            @Override
-            public void onFailure(Call<PostSum> call, Throwable t) {
-                Log.e("TAG", "Unable to submit post to API.");
-            }
-        });
+    public void postSum(long a, long b) {
+
+        apiService.sum(new PostSum(a, b))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.e("TAG", "Subscribe.");
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        showResponse(s);
+                        Log.i("TAG", "post submitted to API." + s);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("TAG", "Unable to submit post to API.");
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.e("TAG", "Complete.");
+                    }
+                });
     }
 
     public void showResponse(String response) {
