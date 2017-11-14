@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView responseTv;
     private APIService apiService;
+    private long x = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         responseTv = (TextView) findViewById(R.id.result);
 
         apiService = ApiUtils.getAPIService();
-        sendBtn.setOnClickListener(view -> postSum(6, 7));
+        sendBtn.setOnClickListener(view -> postSum(x, 7));
     }
 
     public void postSum(long a, long b) {
@@ -40,18 +41,21 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(new Observer<String>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        Log.e("TAG", "Subscribe.");
+
                     }
 
                     @Override
                     public void onNext(String s) {
                         showResponse(s);
-                        Log.i("TAG", "post submitted to API." + s);
+                        Log.i("TAG", "post submitted to API. Response: " + s);
+                        x++;
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e("TAG", "Unable to submit post to API.");
+                        String msg = "Unable to submit post to API. " + e.getMessage();
+                        showResponse(msg);
+                        Log.e("TAG", msg);
                     }
 
                     @Override
