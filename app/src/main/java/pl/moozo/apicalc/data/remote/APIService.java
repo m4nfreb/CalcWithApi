@@ -1,6 +1,6 @@
 package pl.moozo.apicalc.data.remote;
 
-import io.reactivex.Observable;
+import io.reactivex.Single;
 import pl.moozo.apicalc.data.model.PostSum;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
@@ -8,5 +8,5 @@ import retrofit2.http.POST;
 public interface APIService {
 
     @POST("/operations/sum")
-    Observable<String> sum(@Body PostSum postSum);
+    Single<String> sum(@Body PostSum postSum);
 }

@@ -7,9 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import pl.moozo.apicalc.data.model.PostSum;
 import pl.moozo.apicalc.data.remote.APIService;
@@ -19,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView responseTv;
     private APIService apiService;
+    private Button sendBtn;
     private long x = 1;
 
     @Override
@@ -26,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final Button sendBtn = (Button) findViewById(R.id.sendBtn);
+        sendBtn = (Button) findViewById(R.id.sendBtn);
         responseTv = (TextView) findViewById(R.id.result);
 
         apiService = ApiUtils.getAPIService();
@@ -34,35 +33,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void postSum(long a, long b) {
-
         apiService.sum(new PostSum(a, b))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<String>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(String s) {
-                        showResponse(s);
-                        Log.i("TAG", "post submitted to API. Response: " + s);
-                        x++;
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        String msg = "Unable to submit post to API. " + e.getMessage();
-                        showResponse(msg);
-                        Log.e("TAG", msg);
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.e("TAG", "Complete.");
-                    }
-                });
+                .doOnSubscribe(__ ->  sendBtn.setEnabled(false))
+                .doFinally(() -> sendBtn.setEnabled(true))
+                .subscribe(
+                        s -> {
+                            showResponse(s);
+                            Log.i("TAG", "post submitted to API. Response: " + s);
+                            x++;
+                        },
+                        e -> {
+                            String msg = "Unable to submit post to API. " + e.getMessage();
+                            showResponse(msg);
+                            Log.e("TAG", msg);
+                        });
     }
 
     public void showResponse(String response) {
