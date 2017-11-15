@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void postSum(long a, long b) {
         apiService.sum(new PostSum(a, b))
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ ->  sendBtn.setEnabled(false))
                 .doFinally(() -> sendBtn.setEnabled(true))
