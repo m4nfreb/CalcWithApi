@@ -7,11 +7,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import javax.inject.Inject;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import pl.moozo.apicalc.data.model.PostSum;
 import pl.moozo.apicalc.data.remote.APIService;
 import pl.moozo.apicalc.data.remote.ApiUtils;
+import retrofit2.Retrofit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,15 +23,20 @@ public class MainActivity extends AppCompatActivity {
     private Button sendBtn;
     private long x = 1;
 
+    @Inject
+    Retrofit retrofit;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ((App) getApplication()).getNetComponent().inject(this);
 
         sendBtn = (Button) findViewById(R.id.sendBtn);
         responseTv = (TextView) findViewById(R.id.result);
 
-        apiService = ApiUtils.getAPIService();
+        apiService = retrofit.create(APIService.class);
+        //apiService = ApiUtils.getAPIService();
         sendBtn.setOnClickListener(view -> postSum(x, 7));
     }
 
